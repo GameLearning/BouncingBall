@@ -20,6 +20,8 @@ private:
     b2World *_world;
     b2Body *_body;
     cocos2d::Sprite *_ball;
+    
+    void kick(float dt);
 };
 
 #endif // __HELLOWORLD_SCENE_H__

@@ -47,7 +47,7 @@ bool HelloWorld::init()
     
     b2FixtureDef ballShapeDef;
     ballShapeDef.shape = &circle;
-    ballShapeDef.density = 1.0f;
+    ballShapeDef.density = 2.5f;
     ballShapeDef.friction = 0.2f;
     ballShapeDef.restitution = 0.8f;
     _body->CreateFixture(&ballShapeDef);
@@ -57,15 +57,23 @@ bool HelloWorld::init()
     
     b2Body *groundBody = _world->CreateBody(&groundBodyDef);
     b2EdgeShape groundShape;
-    groundShape.Set(b2Vec2(0,0),b2Vec2(visibleSize.width /PTM_RATIO,0));
     b2FixtureDef groundShapeDef;
     groundShapeDef.shape = &groundShape;
+    
+    groundShape.Set(b2Vec2(0,0),b2Vec2(visibleSize.width /PTM_RATIO,0));
     groundBody->CreateFixture(&groundShapeDef);
     
+    groundShape.Set(b2Vec2(0,0),b2Vec2(0,visibleSize.height /PTM_RATIO));
+    groundBody->CreateFixture(&groundShapeDef);
     
+    groundShape.Set(b2Vec2(visibleSize.width /PTM_RATIO,0),b2Vec2(visibleSize.width /PTM_RATIO,visibleSize.height /PTM_RATIO));
+    groundBody->CreateFixture(&groundShapeDef);
     
+    groundShape.Set(b2Vec2(visibleSize.width /PTM_RATIO,visibleSize.height /PTM_RATIO),b2Vec2(0,visibleSize.height /PTM_RATIO));
+    groundBody->CreateFixture(&groundShapeDef);
     
     this->scheduleUpdate();
+    this->schedule(schedule_selector(HelloWorld::kick),5.0f);
     return true;
 }
 
@@ -80,4 +88,9 @@ void HelloWorld::update(float dt){
             ballData->setRotation(-1 * CC_RADIANS_TO_DEGREES(b->GetAngle()));
         }
     }
+}
+
+void HelloWorld::kick(float dt){
+     b2Vec2 force = b2Vec2(30, 30);
+    _body->ApplyLinearImpulse(force,_body->GetPosition(),false);
 }
